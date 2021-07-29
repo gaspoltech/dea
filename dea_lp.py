@@ -73,6 +73,7 @@ def main():
         with st.beta_expander('Efficiency Analysis', expanded=False):
             c1,c2,c3,c4 = st.beta_columns((2,1,2,2))
             with c1:
+                st.write('Current Allocation')
                 bv = dfc.iloc[0,2:15].tolist()
                 v01= bv[0]
                 v02= bv[1]
@@ -92,6 +93,7 @@ def main():
                 st.empty()
             with c3:
                 #min value
+                st.write('Frontier Min Value')
                 v1min = st.number_input(label="PelayananUmum min",value=dflp['PelayananUmum'].min()*100.0,min_value=0.0, max_value=100.0, step=1.0)
                 v2min = st.number_input(label="Pendidikan min",value=dflp['Pendidikan'].min()*100.0,min_value=0.0, max_value=100.0, step=1.0)
                 v3min = st.number_input(label="PerlindunganSosial min",value=dflp['PerlindunganSosial'].min()*100.0,min_value=0.0, max_value=100.0, step=1.0)
@@ -103,6 +105,7 @@ def main():
                 v9min = st.number_input(label="PariwisatadanBudaya min",value=dflp['PariwisatadanBudaya'].min()*100.0,min_value=0.0, max_value=100.0, step=1.0)
             with c4:
                 #max value
+                st.write('Frontier Max Value')
                 v1max = st.number_input(label="PelayananUmum max",value=dflp['PelayananUmum'].max()*100.0,min_value=0.0, max_value=100.0, step=1.0)
                 v2max = st.number_input(label="Pendidikan max",value=dflp['Pendidikan'].max()*100,min_value=0.0, max_value=100.0, step=1.0)
                 v3max = st.number_input(label="PerlindunganSosial max",value=dflp['PerlindunganSosial'].max()*100.0,min_value=0.0, max_value=100.0, step=1.0)
@@ -157,7 +160,7 @@ def main():
         prob += ef[0]+ef[1]*v01+ef[2]*v02+ef[3]*v03+ef[4]*v04+v1*ef[5]+v2*ef[6]+v3*ef[7]+v4*ef[8]+v5*ef[9]+v6*ef[10]+v7*ef[11]+v8*ef[12]+v9*ef[13]
 
         # Solve the problem
-        st.write("Generate Effective and Efficient Allocation")
+        st.write("Generate Recommended Allocation")
         if st.button("Click Here to execute"):
             status = prob.solve()
             p1 =  pulp.value(v1)/100
