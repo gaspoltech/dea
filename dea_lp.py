@@ -28,19 +28,24 @@ def main():
         col = str("y"+str(tahun))
         if tahun==2019:
             dff = pd.read_excel('data2019.xlsx')
+            dfc = dff[dff['Pemda'].isin([pemda])]
             st.sidebar.write('Kondisi : Normal')
-            st.sidebar.write(f'Sektor_Potensial: {dff.Potensi[0]}')
+#             st.sidebar.write(f'Sektor_Potensial: {dff.Potensi[0]}')
             sektor = 'Sektor_group'
             # tahun = '2019'
         elif tahun==2020:
             dff = pd.read_excel('data2020.xlsx')
+            dfc = dff[dff['Pemda'].isin([pemda])]
+            dampak = dfc.Dampak.tolist()
             st.sidebar.write('Kondisi : Pandemi')
-            st.sidebar.write(f'Dampak Pandemi : {dff.Dampak[0]}')
+            st.sidebar.write(f'Dampak Pandemi : {dampak[0]}')
             sektor= 'Cluster'
             # tahun = '2020'
 
         # st.write(dff.head())
-        dfc = dff[dff['Pemda'].isin([pemda])]
+#         dfc = dff[dff['Pemda'].isin([pemda])]
+        potensi = dfc.Potensi.tolist()
+        st.sidebar.write(f'Sektor_Potensial: {potensi[0]}')
         sektor = dfc[sektor].tolist()
         sektor = sektor[0]
         # st.write(sektor)
