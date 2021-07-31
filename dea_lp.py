@@ -5,6 +5,9 @@ import plotly_express as px
 import plotly.graph_objects as go
 # from PIL import Image
 st.set_page_config(layout='wide')
+# import plotly.io as pio
+# pio.templates
+# pio.templates.default = "simple_white"
 # load model 
 # import joblib
 
@@ -55,8 +58,8 @@ def main():
         st.sidebar.number_input(label="Total Anggaran Tahun Berikutnya (Milyar Rupiah)",value=int(nextangg[0])/1000000000,min_value=0.0, max_value=1000000000.0, step=10.0)
         efbase = int(dfc.Efisiensi.sum()*10000)/100
         # st.sidebar.write(f'Potensi Sektoral  : {sektor}')
-        st.subheader(f'Tingkat Efisiensi: {efbase} %')
-        st.subheader(f'Nilai Growth Pemda: {int(dfc.GrowthY.sum()*10000)/100} %')
+        st.subheader(f'Tingkat Efisiensi Pemda: {efbase} %')
+        st.subheader(f'Tingkat Growth PDRB Pemda: {int(dfc.GrowthY.sum()*10000)/100} %')
         s1='PelayananUmum'
         s2='Pendidikan'
         s3='PerlindunganSosial'
@@ -67,23 +70,30 @@ def main():
         s8='Kesehatan'
         s9='PariwisatadanBudaya'
         dfm = pd.melt(dfc,id_vars=['Pemda'],value_vars=[s1,s2,s3,s4,s5,s6,s7,s8,s9])
-        dflp = dff[dff['Provinsi'].isin([provinsi])]
-        #st.write(provinsi)
-        # if tahun==2019:
-        #     sektor=sektor
-        #     dflp = dff[dff['Sektor_group']==sektor]
-        # elif tahun==2020:
-        #     sektor=dff['Cluster'].tolist()
-        #     sektor = sektor[0]
-        #     dflp = dff[dff['Cluster']==sektor]
+        # dflp = dff[dff['Provinsi'].isin([provinsi])]
+        dffs = dff[dff['Potensi']==potensi[0]]
+        # st.write(provinsi)
+        if tahun==2019:
+            dflp=dffs
+        #     # dflp = dff[dff['Sektor_group']==sektor]
+        elif tahun==2020:
+            dflp = dffs[dffs['Flag_anomali']==0]
+            klasterls = dflp['Dampak'].unique()
+            klaster = st.multiselect('Sesuaikan Dampak Pandemi',klasterls,default=dampak[0])
+            dflp = dflp[dflp['Dampak'].isin(klaster)]
+        #     # dffs = dff[dff['Sektor_group']==sektor]
+        #     klaster = dflp['Cluster'].tolist()
+        #     klaster = klaster[0]
+        #     dflp = dflp[dflp['Cluster']==klaster]
+        
         dflp = dflp.replace(to_replace=0,value=np.NAN)
         top = dflp['Efisiensi'].max()
-        #st.write(top)
+        # st.write(top)
         dflp = dflp[dflp['Efisiensi']>=top-0.05]
         dflp['Growth (%)']=dflp['GrowthY']*100
         # dflp = dflp[dflp['Efisiensi'].isin([1])]
         with st.beta_expander('Daftar Pemda Frontier Sektor/Klaster', expanded=False):
-            st.write(dflp[['Provinsi','Pemda','Efisiensi','Growth (%)']])
+            st.write(dflp[['Provinsi','Pemda','Efisiensi','Potensi','Growth (%)']])
         # dflp = dflp.replace(to_replace=0,value=np.NAN)
         kolom = dfm.variable.unique().tolist()
         fig = go.Figure()
