@@ -33,7 +33,7 @@ def main():
             dff = pd.read_excel('data2019.xlsx')
             dfc = dff[dff['Pemda'].isin([pemda])]
             st.sidebar.write('Kondisi : Normal')
-            sektor = 'Sektor_group'
+            
 
         elif tahun==2020:
             dff = pd.read_excel('data2020.xlsx')
@@ -41,8 +41,8 @@ def main():
             dampak = dfc.Dampak.tolist()
             st.sidebar.write('Kondisi : Pandemi')
             st.sidebar.write(f'Dampak Pandemi : {dampak[0]}')
-            sektor= 'Cluster'
-        
+            # sektor= 'Cluster'
+        sektor = 'Sektor_group'
         potensi = dfc.Potensi.tolist()
         st.sidebar.write(f'Sektor_Potensial: {potensi[0]}')
         sektor = dfc[sektor].tolist()
@@ -75,12 +75,16 @@ def main():
         # st.write(provinsi)
         if tahun==2019:
             dflp=dffs
+            clno=0
         #     # dflp = dff[dff['Sektor_group']==sektor]
         elif tahun==2020:
             dflp = dffs[dffs['Flag_anomali']==0]
             klasterls = dflp['Dampak'].unique()
             klaster = st.multiselect('Sesuaikan Dampak Pandemi',klasterls,default=dampak[0])
             dflp = dflp[dflp['Dampak'].isin(klaster)]
+            clno = dflp.Cluster.tolist()
+            clno = clno[0]
+            st.write(clno)
         #     # dffs = dff[dff['Sektor_group']==sektor]
         #     klaster = dflp['Cluster'].tolist()
         #     klaster = klaster[0]
@@ -149,10 +153,12 @@ def main():
                 v9max = st.number_input(label="PariwisatadanBudaya max (%)",value=dflp['PariwisatadanBudaya'].max()*100.0,min_value=0.0, max_value=100.0, step=1.0)
 
         # load model
-        ef = pd.read_excel('effmodel.xlsx')
+        ef = pd.read_excel('efmodel.xlsx')
         ef = ef[col].tolist()
         gr = pd.read_excel('grwmodel.xlsx')
         gr = gr[col].tolist()
+        ef1 = pd.read_excel('efmodel.xlsx')
+        ef1 = ef1[col].tolist()
 
         # Create the LP model
         prob = LpProblem(name="Allocation Optimization",sense=LpMaximize)
@@ -169,10 +175,10 @@ def main():
         # , cat="Float")
         bg = dfc.GrowthY.tolist()
         bg = bg[0]
-        efscore= ef[0]+ef[1]*bv[1]+ef[2]*bv[2]+ef[3]*bv[4]+ef[4]*bv[5]+v1*ef[5]+v2*ef[6]+v3*ef[7]+v4*ef[8]+v5*ef[9]+v6*ef[10]+v7*ef[11]+v8*ef[12]+v9*ef[13]
+        efscore= ef[0]+ef[1]*bv[0]+ef[2]*bv[1]+ef[3]*bv[2]+ef[4]*bv[3]+v1*ef[5]+v2*ef[6]+v3*ef[7]+v4*ef[8]+v5*ef[9]+v6*ef[10]+v7*ef[11]+v8*ef[12]+v9*ef[13]+sektor*ef[14]+clno*ef[15]
         #Objective
         # prob += ef[0]+ef[1]*bv[1]+ef[2]*bv[2]+ef[3]*bv[4]+ef[4]*bv[5]+v1*ef[5]+v2*ef[6]+v3*ef[7]+v4*ef[8]+v5*ef[9]+v6*ef[10]+v7*ef[11]+v8*ef[12]+v9*ef[13]
-        grscore = gr[0]+bv[1]*gr[1]+bv[2]*gr[2]+bv[3]*gr[3]+bv[4]*gr[4]+v1*gr[5]+v2*gr[6]+v3*gr[7]+v4*gr[8]+v5*gr[9]+v6*gr[10]+v7*gr[11]+v8*gr[12]+v9*gr[13]      
+        grscore = gr[0]+bv[1]*gr[1]+bv[2]*gr[2]+bv[3]*gr[3]+v1*gr[4]+v2*gr[5]+v3*gr[6]+v4*gr[7]+v5*gr[8]+v6*gr[9]+v7*gr[10]+v8*gr[11]+v9*gr[12]+sektor*gr[13]+clno*gr[14]
         prob += grscore
         prob += efscore
         # prob += grscore
@@ -226,13 +232,15 @@ def main():
                 fig1.update_layout(width=700, height=600)
                 st.plotly_chart(fig1)
             with h2:
-                efficiency= ef[0]+ef[1]*bv[1]+ef[2]*bv[2]+ef[3]*bv[4]+ef[4]*bv[5]+p1*ef[5]+p2*ef[6]+p3*ef[7]+p4*ef[8]+p5*ef[9]+p6*ef[10]+p7*ef[11]+p8*ef[12]+p9*ef[13]
-                growth= gr[0]+bv[1]*gr[1]+bv[2]*gr[2]+bv[3]*gr[3]+bv[4]*gr[4]+p1*gr[5]+p2*gr[6]+p3*gr[7]+p4*gr[8]+p5*gr[9]+p6*gr[10]+p7*gr[11]+p8*gr[12]+p9*gr[13]
+                # efficiency= ef[0]+ef[1]*bv[1]+ef[2]*bv[2]+ef[3]*bv[4]+ef[4]*bv[5]+p1*ef[5]+p2*ef[6]+p3*ef[7]+p4*ef[8]+p5*ef[9]+p6*ef[10]+p7*ef[11]+p8*ef[12]+p9*ef[13]
+                growth= gr[0]+bv[1]*gr[1]+bv[2]*gr[2]+bv[3]*gr[3]+p1*gr[4]+p2*gr[5]+p3*gr[6]+p4*gr[7]+p5*gr[8]+p6*gr[9]+p7*gr[10]+p8*gr[11]+p9*gr[12]+sektor*gr[13]+clno*gr[14]
+                efficiency= ef[0]+ef[1]*bv[0]+ef[2]*bv[1]+ef[3]*bv[2]+ef[4]*bv[3]+p1*ef[5]+p2*ef[6]+p3*ef[7]+p4*ef[8]+p5*ef[9]+p6*ef[10]+p7*ef[11]+p8*ef[12]+p9*ef[13]+sektor*ef[14]+clno*ef[15]
                 # growth = gr[0]+bv[1]*gr[1]+bv[2]*gr[2]+bv[3]*gr[3]+bv[4]*gr[4]+bv[5]*gr[5]+bv[6]*gr[6]+bv[7]*gr[7]+bv[8]*gr[8]+bv[9]*gr[9]+bv[10]*gr[10]+bv[11]*gr[11]+bv[12]*gr[12]+bv[13]*gr[13]
                 # st.title(f'Prediksi Nilai Growth: {growth*100}%')
                 st.markdown('')
                 st.markdown('')
                 st.markdown('')
+                # st.write(status)
                 fig3 = go.Figure()
                 fig3.add_trace(go.Indicator(
                                 mode = "number+delta",
