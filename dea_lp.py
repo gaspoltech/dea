@@ -68,7 +68,7 @@ def main():
         s9='PariwisatadanBudaya'
         dfm = pd.melt(dfc,id_vars=['Pemda'],value_vars=[s1,s2,s3,s4,s5,s6,s7,s8,s9])
         dflp = dff[dff['Provinsi'].isin([provinsi])]
-        st.write(provinsi)
+        #st.write(provinsi)
         # if tahun==2019:
         #     sektor=sektor
         #     dflp = dff[dff['Sektor_group']==sektor]
@@ -78,7 +78,7 @@ def main():
         #     dflp = dff[dff['Cluster']==sektor]
         dflp = dflp.replace(to_replace=0,value=np.NAN)
         top = dflp['Efisiensi'].max()
-        st.write(top)
+        #st.write(top)
         dflp = dflp[dflp['Efisiensi']>=top-0.05]
         dflp['Growth (%)']=dflp['GrowthY']*100
         # dflp = dflp[dflp['Efisiensi'].isin([1])]
