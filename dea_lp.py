@@ -84,7 +84,7 @@ def main():
             dflp = dflp[dflp['Dampak'].isin(klaster)]
             clno = dflp.Cluster.tolist()
             clno = clno[0]
-            st.write(clno)
+        #    st.write(clno)
         #     # dffs = dff[dff['Sektor_group']==sektor]
         #     klaster = dflp['Cluster'].tolist()
         #     klaster = klaster[0]
