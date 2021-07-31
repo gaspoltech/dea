@@ -84,7 +84,7 @@ def main():
             dflp = dflp[dflp['Dampak'].isin(klaster)]
             clno = dflp.Cluster.tolist()
             clno = clno[0]
-        #    st.write(clno)
+            # st.write(clno)
         #     # dffs = dff[dff['Sektor_group']==sektor]
         #     klaster = dflp['Cluster'].tolist()
         #     klaster = klaster[0]
@@ -157,8 +157,8 @@ def main():
         ef = ef[col].tolist()
         gr = pd.read_excel('grwmodel.xlsx')
         gr = gr[col].tolist()
-        ef1 = pd.read_excel('efmodel.xlsx')
-        ef1 = ef1[col].tolist()
+        # ef1 = pd.read_excel('efmodel.xlsx')
+        # ef1 = ef1[col].tolist()
 
         # Create the LP model
         prob = LpProblem(name="Allocation Optimization",sense=LpMaximize)
@@ -264,13 +264,13 @@ def main():
             with st.beta_expander("Selisih Lebih/Kurang Anggaran dari Realokasi",expanded=False):
                 excess = int(anggaran[0]) * (100-total) /100000000000
                 st.number_input(label=" ",value=excess,min_value=0.0, max_value=1000000000.0, step=10.0)
-            with st.beta_expander("Prediksi Nominal Perubahan PDRB",expanded=False):
+            with st.beta_expander("Prediksi Kenaikan (Penurunan) PDRB",expanded=False):
                 gap = int(anggaran[0]) * int(growth-int(dfc.GrowthY.sum()*10000)) /10000000000000
                 # if st.button("Klik untuk Jalankan"):
                 # st.sidebar.number_input(label="Nilai PDRB Kondisi Saat ini (Milyar Rupiah)",value=int(anggaran[0])/1000000000,min_value=0.0, max_value=1000000000.0, step=10.0)
                 # st.sidebar.number_input(label="Nilai PDRB dengan Alokasi Baru (Milyar Rupiah)",value=int(anggaran[0])/1000000000,min_value=0.0, max_value=1000000000.0, step=10.0)
-                st.number_input(label="Jumlah Kenaikan(Penurunan) PDRB dari Realokasi (Milyar Rupiah)",value=gap,min_value=0-anggaran[0]/1000000000, max_value=1000000000.0, step=10.0)
-                st.number_input(label="Jumlah Kenaikan(Penurunan) PDRB Berdasarkan Anggaran Tahun Berikutnya (Milyar Rupiah)",value=growth*int(nextangg[0])/100000000000,min_value=0-nextangg[0]/1000000000, max_value=1000000000.0, step=10.0)
+                st.number_input(label="Selisih Lebih/Kurang PDRB dari Realokasi (Milyar Rupiah)",value=gap,min_value=0-anggaran[0]/1000000000, max_value=1000000000.0, step=10.0)
+                st.number_input(label="Prediksi Kenaikan/Penurunan PDRB Berdasarkan Anggaran Tahun Berikutnya (Milyar Rupiah)",value=growth*int(nextangg[0])/100000000000,min_value=0-nextangg[0]/1000000000, max_value=1000000000.0, step=10.0)
                 # st.empty()
             
 if __name__=='__main__':
